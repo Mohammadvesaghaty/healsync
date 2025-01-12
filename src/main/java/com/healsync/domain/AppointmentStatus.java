@@ -1,5 +1,9 @@
 package com.healsync.domain;
 
 public enum AppointmentStatus {
-    PENDING, CONFIRMED, CANCELLED, COMPLETED
+    SCHEDULED,
+    COMPLETED,
+    CANCELLED,
+    NO_SHOW,
+    RESCHEDULED
 }
