@@ -16,8 +16,11 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
 
     Optional<Doctor> findByEmail(String email);
     List<Doctor> findByName(String name);
+    List<Doctor> findByNameContainingIgnoreCase(String name);
     List<Doctor> findBySpecialty(String specialty);
+    List<Doctor> findBySpecialtyIgnoreCase(String specialty);
     List<Doctor> findByCityAndZipCode(String city, String zipCode);
+    List<Doctor> findByCityIgnoreCase(String city);
     List<Doctor> findByStatus(DoctorStatus status);
     List<Doctor> findByHospitalName(String hospitalName);
     List<Doctor> findByClinicName(String clinicName);
