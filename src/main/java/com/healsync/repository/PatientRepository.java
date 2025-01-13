@@ -20,6 +20,6 @@ public interface PatientRepository extends JpaRepository<Patient, Long> {
     List<Patient> findByMedicalHistoryContaining(String keyword);
     List<Patient> findByInsuranceProvider(String insuranceProvider);
     List<Patient> findByCity(String city);
-    List<Patient> ByCityAndStatus(String city,PatientStatus status);
+    List<Patient> findByCityAndStatus(String city,PatientStatus status);
     List<Patient> findByZipCode(String zipCode);
 }
