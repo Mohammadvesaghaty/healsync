@@ -12,7 +12,8 @@ public interface AppointmentMapper {
 
     @Mapping(source = "doctor.id", target = "doctorId")
     @Mapping(source = "patient.id", target = "patientId")
-    @Mapping(source = "paymentStatus.name", target = "paymentStatus")
+    @Mapping(source = "paymentStatus", target = "paymentStatus")
+    @Mapping(source = "status", target = "status")
     @Mapping(source = "prescription.id", target = "prescriptionId")
     AppointmentDTO toDTO(Appointment appointment);
 
