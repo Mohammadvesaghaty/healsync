@@ -23,9 +23,9 @@ public class PatientServiceImpl implements com.healsync.Service.PatientService {
     @Override
     public PatientDTO createPatient(PatientDTO patientDTO) {
 
-        patientRepository.findByEmail(patientDTO.getEmail())
-                .orElseThrow(()-> new DuplicateEmailException("Patient with email " + patientDTO.getEmail() + " already exists."));
-
+        if (patientRepository.findByEmail(patientDTO.getEmail()).isPresent()) {
+            throw new DuplicateEmailException("Patient with email " + patientDTO.getEmail() + " already exists.");
+        }
         Patient patient = patientMapper.toEntity(patientDTO);
         validatePatientDetails(patient);
 
