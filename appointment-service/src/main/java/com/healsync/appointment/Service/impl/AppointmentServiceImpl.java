@@ -4,8 +4,12 @@ import com.healsync.appointment.Service.AppointmentService;
 import com.healsync.appointment.domain.Appointment;
 import com.healsync.appointment.domain.AppointmentStatus;
 import com.healsync.appointment.dto.AppointmentDTO;
+import com.healsync.appointment.dto.NotificationChannel;
+import com.healsync.appointment.dto.NotificationRequestDto;
 import com.healsync.appointment.exception.AppointmentNotFoundException;
 import com.healsync.appointment.exception.DoctorNotAvailableException;
+import com.healsync.appointment.feignclient.DoctorServiceClient;
+import com.healsync.appointment.feignclient.NotificationServiceClient;
 import com.healsync.appointment.mapper.AppointmentMapper;
 import com.healsync.appointment.repository.AppointmentRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,9 +26,11 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     private final AppointmentRepository appointmentRepository;
 
-    private final DoctorRepository doctorRepository;
+    private final DoctorServiceClient doctorServiceClient;
 
     private final AppointmentMapper appointmentMapper;
+
+    private final NotificationServiceClient notificationServiceClient;
 
     @Transactional
     @Override
@@ -39,6 +45,17 @@ public class AppointmentServiceImpl implements AppointmentService {
         appointment.setUpdatedAt(LocalDateTime.now());
         appointment.setStatus(AppointmentStatus.SCHEDULED); // default status
         appointment = appointmentRepository.save(appointment);
+
+        // Send notification
+        NotificationRequestDto notificationRequest = NotificationRequestDto.builder()
+                .topic("notification-topic")
+                .recipient(appointmentDTO.getPatientId().toString())
+                .subject("Appointment Confirmation")
+                .body("Your appointment is confirmed for " + appointmentDTO.getAppointmentTime())
+                .channel(NotificationChannel.EMAIL)
+                .build();
+
+        notificationServiceClient.sendNotification(notificationRequest);
 
         return appointmentMapper.toDTO(appointment);
     }
@@ -113,7 +130,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     private boolean isDoctorAvailable(Long doctorId, LocalDateTime appointmentTime) {
-        return doctorRepository.findById(doctorId)
+        return doctorServiceClient.getDoctorById(doctorId)
                 .map(doctor -> doctor.getAvailabilityStart().isBefore(appointmentTime) && doctor.getAvailabilityEnd().isAfter(appointmentTime))
                 .orElse(false);
     }

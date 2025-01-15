@@ -4,7 +4,10 @@ import com.healsync.appointment.Service.impl.AppointmentServiceImpl;
 import com.healsync.appointment.domain.Appointment;
 import com.healsync.appointment.domain.AppointmentStatus;
 import com.healsync.appointment.dto.AppointmentDTO;
+import com.healsync.appointment.dto.DoctorDTO;
 import com.healsync.appointment.exception.AppointmentNotFoundException;
+import com.healsync.appointment.exception.DoctorNotAvailableException;
+import com.healsync.appointment.feignclient.DoctorServiceClient;
 import com.healsync.appointment.mapper.AppointmentMapper;
 import com.healsync.appointment.repository.AppointmentRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,7 +33,7 @@ class AppointmentServiceImplTest {
     private AppointmentRepository appointmentRepository;
 
     @Mock
-    private DoctorRepository doctorRepository;
+    private DoctorServiceClient doctorServiceClient;
 
     @Mock
     private AppointmentMapper appointmentMapper;
@@ -50,7 +53,7 @@ class AppointmentServiceImplTest {
         appointmentDTO.setAppointmentTime(appointmentTime);
 
         Appointment appointment = new Appointment();
-        when(doctorRepository.findById(doctorId)).thenReturn(Optional.of(mockDoctor(appointmentTime)));
+        when(doctorServiceClient.getDoctorById(doctorId)).thenReturn(Optional.of(mockDoctor(appointmentTime)));
         when(appointmentMapper.toEntity(appointmentDTO)).thenReturn(appointment);
         when(appointmentRepository.save(appointment)).thenReturn(appointment);
         when(appointmentMapper.toDTO(appointment)).thenReturn(appointmentDTO);
@@ -71,7 +74,7 @@ class AppointmentServiceImplTest {
         appointmentDTO.setDoctorId(doctorId);
         appointmentDTO.setAppointmentTime(appointmentTime);
 
-        when(doctorRepository.findById(doctorId)).thenReturn(Optional.of(mockDoctor(LocalDateTime.now())));
+        when(doctorServiceClient.getDoctorById(doctorId)).thenReturn(Optional.of(mockDoctor(LocalDateTime.now())));
 
         // Act & Assert
         assertThrows(DoctorNotAvailableException.class, () -> appointmentService.createAppointment(appointmentDTO));
@@ -170,8 +173,8 @@ class AppointmentServiceImplTest {
         verify(appointmentRepository, times(1)).save(existingAppointment);
     }
 
-    private static Doctor mockDoctor(LocalDateTime appointmentTime) {
-        Doctor doctor = new Doctor();
+    private static DoctorDTO mockDoctor(LocalDateTime appointmentTime) {
+        DoctorDTO doctor = new DoctorDTO();
         doctor.setAvailabilityStart(appointmentTime.minusHours(2));
         doctor.setAvailabilityEnd(appointmentTime.plusHours(2));
         return doctor;
