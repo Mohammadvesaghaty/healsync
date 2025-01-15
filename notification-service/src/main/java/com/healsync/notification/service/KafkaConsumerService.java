@@ -15,6 +15,9 @@ public class KafkaConsumerService {
 
     @KafkaListener(topics = Topics.NOTIFICATION_TOPIC, groupId = "notification-group")
     public void processEvent(NotificationRequest notificationRequest)  {
+        if(notificationRequest==null){
+            return;
+        }
         notificationService.sendNotification(notificationRequest);
     }
 
