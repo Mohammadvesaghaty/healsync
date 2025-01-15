@@ -4,13 +4,14 @@ import com.healsync.appointment.Service.AppointmentService;
 import com.healsync.appointment.domain.Appointment;
 import com.healsync.appointment.domain.AppointmentStatus;
 import com.healsync.appointment.dto.AppointmentDTO;
-import com.healsync.appointment.dto.NotificationChannel;
-import com.healsync.appointment.dto.NotificationRequestDto;
+import com.healsync.appointment.notification.NotificationChannel;
+import com.healsync.appointment.notification.NotificationRequestDto;
 import com.healsync.appointment.exception.AppointmentNotFoundException;
 import com.healsync.appointment.exception.DoctorNotAvailableException;
 import com.healsync.appointment.feignclient.DoctorServiceClient;
 import com.healsync.appointment.feignclient.NotificationServiceClient;
 import com.healsync.appointment.mapper.AppointmentMapper;
+import com.healsync.appointment.notification.Topics;
 import com.healsync.appointment.repository.AppointmentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -48,7 +49,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
         // Send notification
         NotificationRequestDto notificationRequest = NotificationRequestDto.builder()
-                .topic("notification-topic")
+                .topic(Topics.NOTIFICATION_TOPIC)
                 .recipient(appointmentDTO.getPatientId().toString())
                 .subject("Appointment Confirmation")
                 .body("Your appointment is confirmed for " + appointmentDTO.getAppointmentTime())

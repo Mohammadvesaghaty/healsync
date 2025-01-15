@@ -1,4 +1,4 @@
-package com.healsync.appointment.dto;
+package com.healsync.appointment.notification;
 
 public enum NotificationChannel {
     EMAIL,

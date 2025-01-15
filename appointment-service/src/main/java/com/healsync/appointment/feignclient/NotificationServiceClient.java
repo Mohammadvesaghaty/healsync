@@ -1,6 +1,6 @@
 package com.healsync.appointment.feignclient;
 
-import com.healsync.appointment.dto.NotificationRequestDto;
+import com.healsync.appointment.notification.NotificationRequestDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 

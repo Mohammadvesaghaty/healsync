@@ -1,4 +1,4 @@
-package com.healsync.appointment.dto;
+package com.healsync.appointment.notification;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
